@@ -77,7 +77,7 @@ x-mu-bulk-wkr-common-config: &mu-bulk-wkr-common-config
   hostname: ${mu_bulk_wkr_HOSTNAME:-mu_bulk_wkr}
 
   deploy:
-    replicas: 5
+    replicas: ${mu_bulk_wkr_INSTANCES:-3}
 
   entrypoint: ["/app/worker_entrypoint.sh"]
 
