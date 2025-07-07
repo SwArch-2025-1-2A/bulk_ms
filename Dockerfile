@@ -45,5 +45,10 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /app
 
+# Copy worker entrypoint and excecute it
+RUN apk update && apk add --no-cache bash
+COPY worker_entrypoint.sh .
+RUN chmod +x worker_entrypoint.sh
+
 # Run the app
 CMD ["python", "main.py"]
