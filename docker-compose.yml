@@ -75,9 +75,11 @@ x-mu-bulk-wkr-common-config: &mu-bulk-wkr-common-config
 
   # Hostname for which the service will be reachable
   hostname: ${mu_bulk_wkr_HOSTNAME:-mu_bulk_wkr}
-  container_name: ${mu_bulk_wkr_HOSTNAME:-mu_bulk_wkr}
 
-  command: celery -A worker.celery worker --loglevel=info
+  deploy:
+    replicas: ${mu_bulk_wkr_INSTANCES:-3}
+
+  entrypoint: ["/app/worker_entrypoint.sh"]
 
   environment:
     CELERY_BROKER_URL: ${mu_bulk_CELERY_BROKER_URL:-amqp://${mu_bulk_bkr_USER:-meetUN}:${mu_bulk_bkr_PASS:-passMeetUN}@${mu_bulk_bkr_HOSTNAME:-mu_bulk_bkr}:${mu_bulk_bkr_INTERNAL_PORT:-5672}/${mu_bulk_bkr_VHOST:-BulkMeetUN}}
@@ -191,7 +193,7 @@ services:
       - ${mu_bulk_dashboard_EXTERNAL_PORT:-5555}:${mu_bulk_dashboard_INTERNAL_PORT:-5555}
 
     command: celery --broker=${mu_bulk_CELERY_BROKER_URL:-amqp://${mu_bulk_bkr_USER:-meetUN}:${mu_bulk_bkr_PASS:-passMeetUN}@${mu_bulk_bkr_HOSTNAME:-mu_bulk_bkr}:${mu_bulk_bkr_INTERNAL_PORT:-5672}/${mu_bulk_bkr_VHOST:-BulkMeetUN}} flower --port=${mu_bulk_dashboard_INTERNAL_PORT:-5555}
- 
+
     environment:
       mu_bulk_CELERY_BROKER_URL: ${mu_bulk_CELERY_BROKER_URL:-redis://${mu_bulk_rb_HOSTNAME:-mu_bulk_rb}:${mu_bulk_rb_INTERNAL_PORT:-6379}/0}
       mu_bulk_dashboard_INTERNAL_PORT: ${mu_bulk_dashboard_INTERNAL_PORT:-5555}
